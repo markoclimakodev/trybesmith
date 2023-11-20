@@ -37,7 +37,14 @@ async function listAllProducts():Promise<ProductSequelizeModel[]> {
   return products;
 }
 
+async function getProductIds(orderId: number):Promise<number[]> {
+  const products = await ProductModel.findAll({ where: { orderId } });
+  return products.map((product) => product.dataValues.id);
+}
+
 export default {
   registerProduct,
   listAllProducts,
+  getProductIds,
+  
 };
