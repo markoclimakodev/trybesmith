@@ -19,4 +19,12 @@ describe('ProductsService', function () {
   expect(response.body).to.have.keys(['id','name','price','orderId'])
 })
 
+it('should throw an error a product', async function() {
+  const productSimulated = ProductModel.build(prodcutFromDb)
+  Sinon.stub(ProductModel, 'create').resolves(productSimulated)
+
+  const response = await chai.request(app).post('/products').send({})
+  expect(response.status).to.be.equal(400)
+})
+
 })
