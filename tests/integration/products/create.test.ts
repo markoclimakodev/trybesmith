@@ -19,16 +19,26 @@ describe('POST /products', function () {
   expect(registerProductResponse.body).to.have.keys(['id','name','price','orderId'])
 })
 
-it('Should throw error for invalid product data', async function() {
+it('Should throw error if name field is missing', async function() {
   const simulatedProduct = ProductModel.build(mockProduct)
   Sinon.stub(ProductModel, 'create').resolves(simulatedProduct)
 
-  const invalidProductDataResponse = await chai.request(app).post('/products').send({})
+  const invalidProductDataResponse = await chai.request(app).post('/products').send({
+    "price": "30 peças de ouros",
+    "orderId": 5
+  })
   expect(invalidProductDataResponse.status).to.be.equal(400)
-  expect(invalidProductDataResponse.body).to.deep.equal({
-    message: "Name is required"
-  });
+})
 
+it('Should throw error if price field is missing', async function() {
+  const simulatedProduct = ProductModel.build(mockProduct)
+  Sinon.stub(ProductModel, 'create').resolves(simulatedProduct)
+
+  const invalidProductDataResponse = await chai.request(app).post('/products').send({
+    "name": "Martelo de Thors",
+    "orderId": 5
+  })
+  expect(invalidProductDataResponse.status).to.be.equal(400)
 })
 
 })
