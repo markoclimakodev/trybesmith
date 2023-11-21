@@ -3,28 +3,32 @@ import chaiHttp from 'chai-http';
 import Sinon from 'sinon';
 import app from '../../../src/app';
 import ProductModel from '../../../src/database/models/product.model';
-import { prodcutFromDb, validProductBody } from '../../mocks/products.mock';
+import { mockInputData, mockProduct } from '../../mocks/products.mock';
 
 chai.use(chaiHttp);
 
-describe('ProductsService', function () {
+describe('POST /products', function () {
   beforeEach(function () { Sinon.restore(); });
 
- it('should register a product', async function() {
-  const productSimulated = ProductModel.build(prodcutFromDb)
-  Sinon.stub(ProductModel, 'create').resolves(productSimulated)
+ it('Should successfully register a product', async function() {
+  const simulatedProduct = ProductModel.build(mockProduct)
+  Sinon.stub(ProductModel, 'create').resolves(simulatedProduct)
 
-  const response = await chai.request(app).post('/products').send(validProductBody)
-  expect(response.status).to.be.equal(201)
-  expect(response.body).to.have.keys(['id','name','price','orderId'])
+  const registerProductResponse = await chai.request(app).post('/products').send(mockInputData)
+  expect(registerProductResponse.status).to.be.equal(201)
+  expect(registerProductResponse.body).to.have.keys(['id','name','price','orderId'])
 })
 
-it('should throw an error a product', async function() {
-  const productSimulated = ProductModel.build(prodcutFromDb)
-  Sinon.stub(ProductModel, 'create').resolves(productSimulated)
+it('Should throw error for invalid product data', async function() {
+  const simulatedProduct = ProductModel.build(mockProduct)
+  Sinon.stub(ProductModel, 'create').resolves(simulatedProduct)
 
-  const response = await chai.request(app).post('/products').send({})
-  expect(response.status).to.be.equal(400)
+  const invalidProductDataResponse = await chai.request(app).post('/products').send({})
+  expect(invalidProductDataResponse.status).to.be.equal(400)
+  expect(invalidProductDataResponse.body).to.deep.equal({
+    message: "Name is required"
+  });
+
 })
 
 })

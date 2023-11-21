@@ -1,4 +1,4 @@
-export const ordersFromDb = [
+export const mockOrderList = [
 	{
 		"id": 1,
 		"userId": 1,
